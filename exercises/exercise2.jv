@@ -1,0 +1,72 @@
+// Author: Nguyen Nhat Anh Vo - 23397969
+// Exercise 2
+// Build an automated data pipeline for the following source:
+// https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv
+// Goal
+// - Keep only valid data we are interested in
+// --- Define types of values and constraints for them
+// --- We are only interested in Furth, valid stadtteil start with "Furth-"
+// --- "id" contains geopoints with the following pattern:
+// ----- {geo-coordinate 1}, {geo-coordinate 2}
+// ----- a geo-coordinate is defined as {1-3 numbers}.{numbers}
+// --- Drop "baumart_deutsch" column
+// --- Drop all rows with invalid values
+// - Assign fitting built-in SQLite types (e.g., BIGINT, TEXT or FLOAT) to all columns
+// - Write data into a SQLite database called “trees.sqlite”, in the table “trees”
+
+valuetype Furth oftype text {
+	constraints: [FurthOnly];
+}
+
+constraint FurthOnly oftype RegexConstraint {
+	regex: /^Furth-.+$/;
+}
+
+valuetype GeoPoints oftype text {
+	constraints: [GeoCoordinateFormat];
+}
+
+constraint GeoCoordinateFormat oftype RegexConstraint {
+	regex: /^\d{1,3}\.\d+, \d{1,3}\.\d+$/;
+}
+
+
+pipeline Planting {
+	DataExtractor ->
+		PlantingTextFileIntepreter ->
+		PlantingCSVIntepreter ->
+		BaumartDeutschDeleter ->
+		PlantingTableIntepreter ->
+		PlantingLoader;
+
+	block DataExtractor oftype HttpExtractor {
+		url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
+	}
+
+	block PlantingTextFileIntepreter oftype TextFileInterpreter {}
+
+	block PlantingCSVIntepreter oftype CSVInterpreter {
+		delimiter: ";";
+	}
+
+	block BaumartDeutschDeleter oftype ColumnDeleter {
+		delete: [column E];
+	}
+
+	block PlantingTableIntepreter oftype TableInterpreter {
+		header: true;
+		columns: [
+			"lfd_nr" oftype integer,
+			"stadtteil" oftype Furth,
+			"standort" oftype text,
+			"baumart_botanisch" oftype text,
+			"id" oftype GeoPoints,
+			"baumfamilie" oftype text
+		];
+	}
+
+	block PlantingLoader oftype SQLiteLoader {
+		table: "trees";
+		file: "trees.sqlite";
+	}
+}

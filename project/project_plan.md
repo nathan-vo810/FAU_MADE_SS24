@@ -21,22 +21,22 @@ Consequently, this project aims to analyze the global consumption of renewable e
 <!-- Describe each datasources you plan to use in a section. Use the prefic "DatasourceX" where X is the id of the datasource. -->
 
 ### Datasource 1: CO2 emission (kt)
-* Metadata URL: https://data.worldbank.org/indicator/EN.ATM.CO2E.KT (included in ZIP archive)
-* Data URL: https://data.worldbank.org/indicator/EN.ATM.CO2E.KT (included in ZIP archive)
+* Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EN.ATM.CO2E.KT
+* Data URL: https://data.worldbank.org/indicator/EN.ATM.CO2E.KT
 * Data Type: CSVs inside a ZIP archive
 
 This dataset contains CO2 emissions across nations from 1990 - 2020.
 
 ### Datasource 2: Renewable energy consumption (% of total final energy consumption)
-* Metadata URL: https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS (included in ZIP archive)
-* Data URL: https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS (included in ZIP archive)
+* Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EG.FEC.RNEW.ZS
+* Data URL: https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS
 * Data Type: CSVs inside a ZIP archive
 
 This dataset contains renewable energy consumption with regarding to total final energy consumption across nations from 1990 - 2021.
 
 ### Datasource 3: Renewable electricity output (% of total electricity output)
-* Metadata URL: https://data.worldbank.org/indicator/EG.ELC.RNEW.ZS (included in ZIP archive)
-* Data URL: https://data.worldbank.org/indicator/EG.ELC.RNEW.ZS (included in ZIP archive)
+* Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EG.ELC.RNEW.ZS
+* Data URL: https://data.worldbank.org/indicator/EG.ELC.RNEW.ZS
 * Data Type: CSVs inside a ZIP archive
 
 This dataset contains renewable electricy output with regarding to total electricity output across nations from 1990 - 2015.

@@ -1,0 +1,99 @@
+// Author: Nguyen Nhat Anh Vo - 23397969
+// Exercise 3
+// Build an automated data pipeline for the following source:
+// https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv
+// Goal
+// - Remove metadata rows (initial description and headers [data starts in row 9], copyright notice in the footer)
+// - Ensure German umlauts are saved correctly
+// - Select only a subset of columns
+// --- Data about time and transported goods: Column A-E
+// --- Data about quantity: Column AT-AU
+// - Add header names for the first columns A-E
+// --- New names: 'year', 'month', 'goods_id', 'goods_name', 'goods_source'
+// - Rename headers for the quantity columns AT-AU
+// --- New names: 'abroad', 'total'
+// - Choose suitable value types for all columns
+// --- Numeric values must be positive integers
+// --- 'month' must be a German month, capitalized
+// --- 'goods_id' must start with NST7-, followed by three numbers or capital letters
+// - Drop rows with missing or invalid values
+// - Assign fitting built-in SQLite types (e.g., BIGINT, TEXT or FLOAT) to all columns
+// - Write data into a SQLite database called “goodsTransportedByTrain.sqlite”, in the table “goods”
+
+valuetype pos_int oftype integer {
+    constraints: [positiveOnly];
+}
+
+constraint positiveOnly oftype RangeConstraint {
+    lowerBound: 1;
+}
+
+valuetype month oftype text {
+    constraints: [GermanMonth];
+}
+
+constraint GermanMonth oftype AllowlistConstraint {
+   allowlist: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+}
+
+valuetype goods_id oftype text {
+	constraints: [id_constraint];
+}
+
+constraint id_constraint oftype RegexConstraint {
+	regex: /^NST7-[0-9A-Z]{3}/;
+}
+
+pipeline GoodsPipeline {
+    DataExtractor -> 
+        GoodsTextFileIntepreter ->
+        GoodsCSVFileIntepreter ->
+        MetadataDeleter ->
+        DataSelector ->
+        HeaderWriter ->
+        GoodsTableIntepreter ->
+        GoodsTableLoader;
+
+    block DataExtractor oftype HttpExtractor {
+        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv";
+    }
+
+    block GoodsTextFileIntepreter oftype TextFileInterpreter {
+        encoding: "latin2";
+    }
+
+    block GoodsCSVFileIntepreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    block MetadataDeleter oftype RowDeleter {
+        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7];
+    }
+
+    block DataSelector oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I, column J, column K, column L, column M, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column W, column X, column Y, column Z, column AA, column AB, column AC, column AD, column AE, column AF, column AG, column AH, column AI, column AJ, column AK, column AL, column AM, column AN, column AO, column AP, column AQ, column AR, column AS];
+    }
+
+    block HeaderWriter oftype CellWriter {
+        at: range A1:G1;
+        write: ["years", "month", "goods_id", "goods_name", "goods_source", "abroad", "total"];
+    }
+
+    block GoodsTableIntepreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "years" oftype pos_int,
+            "month" oftype month, 
+            "goods_id" oftype goods_id,
+            "goods_name" oftype text, 
+            "goods_source" oftype text,
+            "abroad" oftype pos_int,
+            "total" oftype pos_int
+        ];
+    }
+
+    block GoodsTableLoader oftype SQLiteLoader {
+        table: "goods";
+        file: "goodsTransportedByTrain.sqlite";
+    }
+}

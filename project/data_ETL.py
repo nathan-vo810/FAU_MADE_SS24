@@ -86,7 +86,7 @@ def transform_data(df):
         # Drop countries those have NaN values for all years
         df.dropna(subset=year_range, how='all', inplace=True)
 
-        # Fill NA/NaN values by using the next valid observation to fill the gap.
+        # Fill NaN values with 0
         df.fillna(0, inplace=True)
 
         logger.info("Data transformation complete")

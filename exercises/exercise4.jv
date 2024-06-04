@@ -31,13 +31,6 @@ valuetype ID oftype decimal {
     constraints: [validID];
 }
 
-constraint validMonth on integer:
-    value >= 1 and value <= 12;
-
-valuetype Month oftype integer {
-    constraints: [validMonth];
-}
-
 transform CelsiusToFahrenheit {
    from Celsius oftype decimal;
    to Fahrenheit oftype decimal;
@@ -85,7 +78,7 @@ pipeline BatteriePipeline {
             "id" oftype ID,
             "producer" oftype text,
             "model" oftype text,
-            "month" oftype Month,
+            "month" oftype integer,
             "temperature" oftype decimal,
             "battery_temperature" oftype decimal
         ];

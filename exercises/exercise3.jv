@@ -32,7 +32,7 @@ valuetype month oftype text {
 }
 
 constraint GermanMonth oftype AllowlistConstraint {
-   allowlist: ["Januar", "Februar", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+   allowlist: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 }
 
 valuetype goods_id oftype text {

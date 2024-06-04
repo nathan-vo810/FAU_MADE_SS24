@@ -25,7 +25,7 @@ valuetype pos_int oftype integer {
 }
 
 constraint positiveOnly on decimal:
-    value >= 0;
+    value > 0;
 
 valuetype month oftype text {
     constraints: [GermanMonth];
@@ -59,7 +59,7 @@ pipeline GoodsPipeline {
     }
 
     block GoodsTextFileIntepreter oftype TextFileInterpreter {
-        encoding: "latin2";
+        encoding: "latin3";
     }
 
     block GoodsCSVFileIntepreter oftype CSVInterpreter {

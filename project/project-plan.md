@@ -24,6 +24,8 @@ Consequently, this project aims to analyze the global consumption of renewable e
 * Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EN.ATM.CO2E.KT
 * Data URL: https://data.worldbank.org/indicator/EN.ATM.CO2E.KT
 * Data Type: CSVs inside a ZIP archive
+* License: [CC BY-NC 4.0][cc-by-nc-4]
+* Source: Climate Watch – Historical GHG Emissions (1990–2020) (2023, Washington, DC: World Resources Institute)
 
 This dataset contains CO2 emissions across nations from 1990 - 2020.
 
@@ -31,15 +33,10 @@ This dataset contains CO2 emissions across nations from 1990 - 2020.
 * Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EG.FEC.RNEW.ZS
 * Data URL: https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS
 * Data Type: CSVs inside a ZIP archive
+* License: [CC BY-4.0][cc-by-4]
+* Source: IEA, IRENA, UNSD, World Bank, and WHO (2023 Tracking SDG 7: The Energy Progress Report, Washington DC)
 
 This dataset contains renewable energy consumption with regarding to total final energy consumption across nations from 1990 - 2021.
-
-### Datasource 3: Renewable electricity output (% of total electricity output)
-* Metadata URL: https://databank.worldbank.org/reports.aspx?source=2&type=metadata&series=EG.ELC.RNEW.ZS
-* Data URL: https://data.worldbank.org/indicator/EG.ELC.RNEW.ZS
-* Data Type: CSVs inside a ZIP archive
-
-This dataset contains renewable electricy output with regarding to total electricity output across nations from 1990 - 2015.
 
 ## Work Packages
 
@@ -56,3 +53,5 @@ This dataset contains renewable electricy output with regarding to total electri
 [i3]: https://github.com/nathan-vo810/FAU_MADE_SS24/issues/3
 [i4]: https://github.com/nathan-vo810/FAU_MADE_SS24/issues/4
 [i5]: https://github.com/nathan-vo810/FAU_MADE_SS24/issues/5
+[cc-by-4]: https://creativecommons.org/licenses/by/4.0/
+[cc-by-nc-4]: https://creativecommons.org/licenses/by-nc/4.0/

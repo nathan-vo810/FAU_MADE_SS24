@@ -24,9 +24,8 @@ valuetype pos_int oftype integer {
     constraints: [positiveOnly];
 }
 
-constraint positiveOnly oftype RangeConstraint {
-    lowerBound: 1;
-}
+constraint positiveOnly on decimal:
+    value >= 0;
 
 valuetype month oftype text {
     constraints: [GermanMonth];
@@ -49,8 +48,9 @@ pipeline GoodsPipeline {
         GoodsTextFileIntepreter ->
         GoodsCSVFileIntepreter ->
         MetadataDeleter ->
-        DataSelector ->
-        HeaderWriter ->
+        CellSelect ->
+        TimeHeaderWriter ->
+        QuantityHeaderWriter ->
         GoodsTableIntepreter ->
         GoodsTableLoader;
 
@@ -70,13 +70,18 @@ pipeline GoodsPipeline {
         delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7, row 41337, row 41338, row 41339];
     }
 
-    block DataSelector oftype ColumnDeleter {
-        delete: [column F, column G, column H, column I, column J, column K, column L, column M, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column W, column X, column Y, column Z, column AA, column AB, column AC, column AD, column AE, column AF, column AG, column AH, column AI, column AJ, column AK, column AL, column AM, column AN, column AO, column AP, column AQ, column AR, column AS];
+    block CellSelect oftype CellRangeSelector {
+        select: range A1:AU*;
     }
 
-    block HeaderWriter oftype CellWriter {
-        at: range A1:G1;
-        write: ["year", "month", "goods_id", "goods_name", "goods_source", "abroad", "total"];
+    block TimeHeaderWriter oftype CellWriter {
+        at: range A1:E1;
+        write: ["year", "month", "goods_id", "goods_name", "goods_source"];
+    }
+
+    block QuantityHeaderWriter oftype CellWriter {
+        at: range AT1:AU1;
+        write: ["abroad", "total"];
     }
 
     block GoodsTableIntepreter oftype TableInterpreter {

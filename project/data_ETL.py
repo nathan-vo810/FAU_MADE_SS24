@@ -82,7 +82,7 @@ def transform_data(df, skipcols):
         # Drop countries those have NaN values for all years
         df.dropna(subset=year_range, how='all', inplace=True)
 
-        # Fill NaN values with 0
+        # Fill NaN values with nearest available value
         df.bfill(axis=0, inplace=True)
 
         logger.info("Data transformation complete")

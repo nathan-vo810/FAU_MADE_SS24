@@ -24,10 +24,10 @@
 // - Use fitting SQLite types (e.g., BIGINT, TEXT or FLOAT) for all columns
 // - Write data into a SQLite database called "temperatures.sqlite", in the table "temperatures"
 
-constraint validID on decimal:
+constraint validID on integer:
     value > 0;
 
-valuetype ID oftype decimal {
+valuetype ID oftype integer {
     constraints: [validID];
 }
 

@@ -1,0 +1,110 @@
+// Author: Nguyen Nhat Anh Vo - 23397969
+// Exercise 4
+// Build an automated data pipeline for the following source:
+// https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip
+// Goal
+// - Download and unzip data
+// --- Use the "data.csv" in the zip file
+// - Reshape data
+// --- Only use the columns "Geraet", "Hersteller", "Model", "Monat", "Temperatur in °C (DWD)", "Batterietemperatur in °C"
+// --- There can be multiple temperature measurements per row
+// ----- You can ignore all columns to the right of the first "​​Geraet aktiv"
+// --- Translate/rename column headers from German to English:
+// ----- "Geraet" to "id"
+// ----- "Hersteller" to "producer"
+// ----- "Model" to "model"
+// ----- "Monat" to "month"
+// ----- "Temperatur in °C (DWD)" to "temperature"
+// ----- "Batterietemperatur in °C" to "battery_temperature"
+// - Transform data
+// --- Transform temperatures in Celsius to Fahrenheit (formula is (TemperatureInCelsius * 9/5) + 32) in place (keep the same column names)
+// ----- For the columns temperature and battery_temperature
+// - Validate data
+// --- Use validations as you see fit, e.g., for "Geraet" to be an id over 0
+// - Use fitting SQLite types (e.g., BIGINT, TEXT or FLOAT) for all columns
+// - Write data into a SQLite database called "temperatures.sqlite", in the table "temperatures"
+
+constraint validID on decimal:
+    value > 0;
+
+valuetype ID oftype decimal {
+    constraints: [validID];
+}
+
+constraint validMonth on integer:
+    value >= 1 and value <= 12;
+
+valuetype Month oftype integer {
+    constraints: [validMonth];
+}
+
+transform CelsiusToFahrenheit {
+   from Celsius oftype decimal;
+   to Fahrenheit oftype decimal;
+   Fahrenheit: (Celsius * 9/5) + 32;
+}
+
+pipeline BatteriePipeline {
+    DataExtractor ->
+        BatterieArchiveInterpreter ->
+        BatterieFilePicker ->
+        BatterieFileInterpreter ->
+        BatterieCSVFileInterpreter ->
+        HeaderSequenceWriter ->
+        BatterieTableInterpreter ->
+        Temperature_CelsiusToFahrenheitTransformer ->
+        BatteryTemperature_CelsiusToFahrenheitTransformer ->
+        BatterieTableLoader;
+
+    block DataExtractor oftype HttpExtractor {
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+
+    block BatterieArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    block BatterieFilePicker oftype FilePicker {
+        path: "/data.csv";
+    }
+
+    block BatterieFileInterpreter oftype TextFileInterpreter {}
+
+    block BatterieCSVFileInterpreter oftype CSVInterpreter {
+        delimiter: ";";
+    }
+
+    block HeaderSequenceWriter oftype CellWriter {
+        at: range A1:F1;
+        write: ["id", "producer", "model", "month", "temperature", "battery_temperature"];
+    }
+
+    block BatterieTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "id" oftype ID,
+            "producer" oftype text,
+            "model" oftype text,
+            "month" oftype Month,
+            "temperature" oftype decimal,
+            "battery_temperature" oftype decimal
+        ];
+    }
+
+    block Temperature_CelsiusToFahrenheitTransformer oftype TableTransformer {
+        inputColumns: ['temperature'];
+        outputColumn: 'temperature';
+        use: CelsiusToFahrenheit;
+    }
+
+    block BatteryTemperature_CelsiusToFahrenheitTransformer oftype TableTransformer {
+        inputColumns: ['battery_temperature'];
+        outputColumn: 'battery_temperature';
+        use: CelsiusToFahrenheit;
+    }
+
+    block BatterieTableLoader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "temperatures.sqlite";
+    }
+}

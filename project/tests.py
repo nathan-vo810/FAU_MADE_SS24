@@ -79,6 +79,10 @@ class TestETLPipeline(unittest.TestCase):
 
     def test_save_to_sqlite(self):
         save_to_sqlite(self.mock_df, self.data_dir, "test_database.sqlite", "test_table")
+
+        # Check if db is saved
+        self.assertTrue(os.path.exists(self.db_path))
+        
         with sqlite3.connect(self.db_path) as conn:
             result_df = pd.read_sql_query("SELECT * FROM test_table", conn,
                                           dtype={'1989': np.float64})

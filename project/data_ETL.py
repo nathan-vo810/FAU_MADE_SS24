@@ -63,7 +63,7 @@ def read_csv_file(data_dir, filename, skiprows):
         raise
 
 
-def transform_data(df, skipcols):
+def transform_data(df, skipcols, year_range):
     try:
         # Drop unnecessary columns
         df.drop(skipcols, axis='columns', inplace=True)
@@ -75,7 +75,6 @@ def transform_data(df, skipcols):
         data_year_range = df.columns[4:].to_list()
 
         # Set year range the same for all dataset (1990 - 2020)
-        year_range = [str(year) for year in range(config['start_year'], config['end_year']+1)]
         excluded_year = list(set(data_year_range) - set(year_range))
         df.drop(excluded_year, axis = 1, inplace=True)
 
@@ -83,12 +82,14 @@ def transform_data(df, skipcols):
         df.dropna(subset=year_range, how='all', inplace=True)
 
         # Fill NaN values with nearest available value
-        df.bfill(axis=0, inplace=True)
+        df = df.bfill(axis=1)
 
         logger.info("Data transformation complete")
     except Exception as e:
         logger.error("Error transforming data: %s", e)
         raise
+
+    return df
 
 
 def save_to_sqlite(df, data_dir, db_name, table_name):
@@ -113,6 +114,7 @@ def main():
 
     dfs = []
 
+    year_range = [str(year) for year in range(config['start_year'], config['end_year']+1)]
     for i, dataset in enumerate(datasets):
         logger.info("-" * 30)
         logger.info("Processing Dataset %d", i+1)
@@ -120,7 +122,7 @@ def main():
         try:
             download_and_extract(dataset['url'], data_dir)
             df = read_csv_file(data_dir, dataset['filename'], dataset['skiprows'])
-            transform_data(df, dataset['skipcols'])
+            df = transform_data(df, dataset['skipcols'], year_range)
             dfs.append(df)
         except Exception as e:
             logger.error("Error processing dataset: %s", e)

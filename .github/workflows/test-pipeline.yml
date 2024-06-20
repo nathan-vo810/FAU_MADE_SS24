@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          path: fau_made
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,4 +21,4 @@ jobs:
 
       - name: Run tests
         run: |
-          ./fau_made/project/tests.sh
+          project/tests.sh

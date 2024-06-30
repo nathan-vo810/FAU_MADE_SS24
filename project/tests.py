@@ -103,14 +103,14 @@ class TestETLPipeline(unittest.TestCase):
                 result_df = pd.read_sql_query(f"SELECT * FROM {dataset['table_name']}", conn)
 
                 # Check shape
-                self.assertEqual(result_df.shape, (239, 32))
+                self.assertEqual(result_df.shape, (236, 33))
 
                 # Check if all nan values are filled
                 self.assertFalse(result_df.isnull().values.any())
 
                 # Check columns
                 years_range = [str(year) for year in range(1990, 2021)]
-                self.assertEqual(result_df.columns.to_list(), ["Country Name", *years_range])
+                self.assertEqual(result_df.columns.to_list(), ["Country Name", "Country Code", *years_range])
 
 
 if __name__ == "__main__":

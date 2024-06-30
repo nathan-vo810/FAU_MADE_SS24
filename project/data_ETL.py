@@ -4,6 +4,7 @@ import os
 import sqlite3
 import logging
 import pandas as pd
+import numpy as np
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,14 +18,14 @@ config = {
         "url": "https://api.worldbank.org/v2/en/indicator/EN.ATM.CO2E.KT?downloadformat=csv",
         "filename": "API_EN.ATM.CO2E.KT_DS2_en_csv_v2",
         "skiprows": 4,
-        "skipcols": ["Country Code", "Indicator Name", "Indicator Code"],
+        "skipcols": ["Indicator Name", "Indicator Code"],
         "table_name": "CO2_Emission"
     },
     {
         "url": "https://api.worldbank.org/v2/en/indicator/EG.FEC.RNEW.ZS?downloadformat=csv",
         "filename": "API_EG.FEC.RNEW.ZS_DS2_en_csv_v2",
         "skiprows": 4,
-        "skipcols": ["Country Code", "Indicator Name", "Indicator Code"],
+        "skipcols": ["Indicator Name", "Indicator Code"],
         "table_name": "Renewable_Energy_Consumption"
     }],
     "start_year": 1990,
@@ -78,11 +79,13 @@ def transform_data(df, skipcols, year_range):
         excluded_year = list(set(data_year_range) - set(year_range))
         df.drop(excluded_year, axis = 1, inplace=True)
 
-        # Drop countries those have NaN values for all years
-        df.dropna(subset=year_range, how='all', inplace=True)
-
-        # Fill NaN values with nearest available value
+        # Replace 0 with NaN
+        df = df.replace(0, np.nan)
+        # Fill missing values (NaN) with nearest available value
         df = df.bfill(axis=1)
+
+        # Drop countries those have NaN values for all years
+        df.dropna(subset=year_range, how='any', inplace=True)
 
         logger.info("Data transformation complete")
     except Exception as e:

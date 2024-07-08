@@ -1,51 +1,76 @@
-# Exercise Badges
+[![CC BY 4.0][cc-by-shield]][cc-by-4]
 
-![](https://byob.yarr.is/nathan-vo810/FAU_MADE_SS24/score_ex1) ![](https://byob.yarr.is/nathan-vo810/FAU_MADE_SS24/score_ex2) ![](https://byob.yarr.is/nathan-vo810/FAU_MADE_SS24/score_ex3) ![](https://byob.yarr.is/nathan-vo810/FAU_MADE_SS24/score_ex4) ![](https://byob.yarr.is/nathan-vo810/FAU_MADE_SS24/score_ex5)
+# Correlation Between Renewable Energy Consumption and CO2 Emissions in various countries
 
-# Methods of Advanced Data Engineering Template Project
+## Introduction
+The combustion of fossil fuels such as coal, petroleum, and natural gas emits a significant amount of carbon dioxide (CO2), which is the largest contributor to greenhouse gases and global warming. To mitigate climate change, many countries are transitioning from fossil fuels to renewable, sustainable energy sources like solar and wind. This project aims to analyze global renewable energy consumption and assess its influence on CO2 emissions, exploring how renewable energy supports the fight against climate change. 
 
-This template project provides some structure for your open data project in the MADE module at FAU.
-This repository contains (a) a data science project that is developed by the student over the course of the semester, and (b) the exercises that are submitted over the course of the semester.
-Before you begin, make sure you have [Python](https://www.python.org/) and [Jayvee](https://github.com/jvalue/jayvee) installed. We will work with [Jupyter notebooks](https://jupyter.org/). The easiest way to do so is to set up [VSCode](https://code.visualstudio.com/) with the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter).
+### Research Question
+What is the correlation between renewable energy consumption and CO2 emissions in various countries?
 
-To get started, please follow these steps:
-1. Create your own fork of this repository. Feel free to rename the repository right after creation, before you let the teaching instructors know your repository URL. **Do not rename the repository during the semester**.
-2. Setup the exercise feedback by changing the exercise badge sources in the `README.md` file following the patter `![](https://byob.yarr.is/<github-user-name>/<github-repo>/score_ex<exercise-number>)`. 
-For example, if your user is _myuser_ and your repo is _myrepo_, then update the badge for _exercise 1_ to `![](https://byob.yarr.is/myrepo/myuser/score_ex1)`. Proceed with the remaining badges accordingly.
+## Data Sources
+The data used in this analysis includes:
 
+- **CO2 Emission Data:**
+  - **Geographical Coverage:** 266 countries/associations
+  - **Temporal Coverage:** 1990 - 2020
+  - **Unit:** kt
+  - **License:** [CC BY-NC 4.0][cc-by-nc-4]
+  - **Source:** Climate Watch – Historical GHG Emissions (1990–2020)
+  - **Provider:** [The World Bank][co2]
 
-## Project Work
-Your data engineering project will run alongside lectures during the semester. We will ask you to regularly submit project work as milestones so you can reasonably pace your work. All project work submissions **must** be placed in the `project` folder.
+- **Renewable Energy Consumption Data:**
+  - **Geographical Coverage:** 266 countries/associations
+  - **Temporal Coverage:** 1990 - 2021
+  - **Unit:** % of total final energy consumption
+  - **License:** [CC BY-4.0][cc-by-4]
+  - **Source:** IEA, IRENA, UNSD, World Bank, WHO (2023 Tracking SDG 7: The Energy Progress Report)
+  - **Provider:** [The World Bank][rnew]
 
-### Exporting a Jupyter Notebook
-Jupyter Notebooks can be exported using `nbconvert` (`pip install nbconvert`). For example, to export the example notebook to html: `jupyter nbconvert --to html examples/final-report-example.ipynb --embed-images --output final-report.html`
+### Data Adaptation and Changes
+- The time period for the Renewable Energy Consumption dataset is set to 1990 – 2020.
+- Countries/associations without records have been excluded.
+- Only countries/associations present in both datasets are selected.
+- Missing values are filled using the first available value for each country/association.
 
+### Final Dataset
+- The final datasets encompass 236 countries and associations from 1990 – 2020.
+- These datasets are stored in 2 tables within an SQLite database, saved locally.
 
-## Exercises
-During the semester you will need to complete exercises using [Jayvee](https://github.com/jvalue/jayvee). You **must** place your submission in the `exercises` folder in your repository and name them according to their number from one to five: `exercise<number from 1-5>.jv`.
+## Analysis
+The analysis follows a structured approach to examine the correlation between CO2 emissions and renewable energy consumption from 1990 to 2020. Key points include:
 
-In regular intervalls, exercises will be given as homework to complete during the semester. Details and deadlines will be discussed in the lecture, also see the [course schedule](https://made.uni1.de/). At the end of the semester, you will therefore have the following files in your repository:
+- **Global CO2 Emissions Trends:** 
+  - Steady increase from 1990 to 2020, with a significant rise of 57.7% and a modest decline of about 5% towards the end of the period.
+  
+- **Global Renewable Energy Consumption Trends:**
+  - Steady increase in renewable energy consumption, with noticeable fluctuations and a sharp rise towards 2020.
+  
+- **Top CO2 Emitters:**
+  - Approximately 60% of global CO2 emissions originate from 10 countries, with China and the United States being the largest contributors.
+  
+- **Renewable Energy Consumption in Top Emitters:**
+  - Significant decline in renewable energy consumption in China and India, while other top emitters showed a steady increase.
 
-1. `./exercises/exercise1.jv`
-2. `./exercises/exercise2.jv`
-3. `./exercises/exercise3.jv`
-4. `./exercises/exercise4.jv`
-5. `./exercises/exercise5.jv`
+- **Countries with Largest CO2 Reductions:**
+  - Estonia, Ukraine, Moldova, Lithuania, and Romania show significant increases in renewable energy usage and substantial decreases in CO2 emissions.
+  
+- **Emissions and Renewable Energy by Income Group:**
+  - Middle-income countries have seen a significant rise in CO2 emissions, surpassing high-income countries.
+  - Low-income countries lead in renewable energy consumption, while high-income countries show the lowest renewable energy usage.
 
-### Exercise Feedback
-We provide automated exercise feedback using a GitHub action (that is defined in `.github/workflows/exercise-feedback.yml`). 
+## Conclusion
+The correlation between renewable energy consumption and CO2 emissions varies significantly across different countries and economic groups. While global trends indicate an increase in renewable energy adoption and a beginning decline in CO2 emissions, other factors such as regulations and technologies may play more significant roles in limiting CO2 emissions. Further investigation into renewable energy output, country-specific regulations, and advanced energy technologies is necessary to answer the research question more definitively.
 
-To view your exercise feedback, navigate to Actions -> Exercise Feedback in your repository.
+## License
+This work is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by-4].
 
-The exercise feedback is executed whenever you make a change in files in the `exercise` folder and push your local changes to the repository on GitHub. To see the feedback, open the latest GitHub Action run, open the `exercise-feedback` job and `Exercise Feedback` step. You should see command line output that contains output like this:
+[![CC BY 4.0][cc-by-image]][cc-by-4]
 
-```sh
-Found exercises/exercise1.jv, executing model...
-Found output file airports.sqlite, grading...
-Grading Exercise 1
-	Overall points 17 of 17
-	---
-	By category:
-		Shape: 4 of 4
-		Types: 13 of 13
-```
+[cc-by-4]: https://creativecommons.org/licenses/by/4.0/
+[cc-by-nc-4]: https://creativecommons.org/licenses/by-nc/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
+[co2]: https://data.worldbank.org/indicator/EN.ATM.CO2E.KT
+[rnew]: https://data.worldbank.org/indicator/EG.FEC.RNEW.ZS
